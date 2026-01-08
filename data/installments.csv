@@ -1,0 +1,4 @@
+installment_id,customer_id,product_id,total_price,paid_amount,remaining_amount
+1,101,201,3500.00,1500.00,2000.00
+2,102,202,1200.00,600.00,600.00
+3,103,203,800.00,0.00,800.00
