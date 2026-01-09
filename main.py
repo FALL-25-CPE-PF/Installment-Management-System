@@ -362,11 +362,22 @@ def view_installments():
     except Exception as e:
         print(f"Error: {e}")
 
-# Main Menu
-def show_menu():
-    """Display the main menu"""
+# Login Menu
+def show_login_menu():
+    """Display the login menu"""
     print("\n" + "="*50)
     print("INSTALLMENT MANAGEMENT SYSTEM")
+    print("="*50)
+    print("1. Admin")
+    print("2. User")
+    print("3. Exit")
+    print("="*50)
+
+# Admin Menu
+def show_admin_menu():
+    """Display the admin menu"""
+    print("\n" + "="*50)
+    print("ADMIN PANEL")
     print("="*50)
     print("1. Add Customer")
     print("2. Add Product")
@@ -375,15 +386,86 @@ def show_menu():
     print("5. View Customers")
     print("6. View Products")
     print("7. View Installments")
-    print("8. Exit")
+    print("8. Back to Main Menu")
     print("="*50)
+
+# User Menu
+def user_panel():
+    """User view their own installments"""
+    try:
+        customer_id = input("\nEnter your Customer ID: ").strip()
+        
+        # Check if customer exists
+        if not id_exists(CUSTOMERS_FILE, 0, customer_id):
+            print(f"Error: Customer ID {customer_id} not found!")
+            return
+        
+        # Get customer details
+        rows = read_csv(CUSTOMERS_FILE)
+        customer_data = None
+        for i in range(1, len(rows)):
+            if rows[i][0] == customer_id:
+                customer_data = rows[i]
+                break
+        
+        print("\n--- Your Details ---")
+        print(f"Customer ID: {customer_data[0]}")
+        print(f"Name: {customer_data[1]}")
+        print(f"Phone: {customer_data[2]}")
+        print(f"Address: {customer_data[3]}")
+        
+        # View customer's installments
+        print("\n--- Your Installments ---")
+        installment_rows = read_csv(INSTALLMENTS_FILE)
+        
+        if len(installment_rows) <= 1:
+            print("No installments found.")
+            return
+        
+        print(f"{'ID':<6} | {'Product ID':<12} | {'Total':<10} | {'Paid':<10} | {'Remaining':<10}")
+        print("-" * 65)
+        
+        found = False
+        for i in range(1, len(installment_rows)):
+            if installment_rows[i][1] == customer_id:
+                found = True
+                print(f"{installment_rows[i][0]:<6} | {installment_rows[i][2]:<12} | {installment_rows[i][3]:<10} | {installment_rows[i][4]:<10} | {installment_rows[i][5]:<10}")
+        
+        if not found:
+            print("No installments found for your account.")
+            
+    except Exception as e:
+        print(f"Error: {e}")
 
 def main():
     """Main program loop"""
     initialize_system()
     
     while True:
-        show_menu()
+        show_login_menu()
+        
+        try:
+            choice = input("Enter your choice (1-3): ").strip()
+            
+            if choice == '1':
+                # Admin Panel
+                admin_panel()
+            elif choice == '2':
+                # User Panel
+                user_panel()
+            elif choice == '3':
+                print("\nThank you for using Installment Management System!")
+                break
+            else:
+                print("Error: Invalid choice! Please enter 1-3.")
+                
+        except Exception as e:
+            print(f"Error: {e}")
+
+def admin_panel():
+    """Admin control panel with all features"""
+    while True:
+        show_admin_menu()
         
         try:
             choice = input("Enter your choice (1-8): ").strip()
@@ -403,7 +485,7 @@ def main():
             elif choice == '7':
                 view_installments()
             elif choice == '8':
-                print("\nThank you for using Installment Management System!")
+                print("\nReturning to main menu...\n")
                 break
             else:
                 print("Error: Invalid choice! Please enter 1-8.")
